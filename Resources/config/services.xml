@@ -4,17 +4,16 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <!--
     <parameters>
-        <parameter key="s_roze_io_social_share.example.class">SRozeIO\SocialShareBundle\Example</parameter>
+        <parameter key="srozeio.social_share.builder.class">SRozeIO\SocialShareBundle\Social\ShareBuilder</parameter>
+        <parameter key="srozeio.social_share.adapter.facebook.class">SRozeIO\SocialShareBundle\Social\Adapter\FacebookAdapter</parameter>
     </parameters>
 
     <services>
-        <service id="s_roze_io_social_share.example" class="%s_roze_io_social_share.example.class%">
-            <argument type="service" id="service_id" />
-            <argument>plain_value</argument>
-            <argument>%parameter_name%</argument>
+        <service id="srozeio.social_share.builder" class="%srozeio.social_share.builder.class%"></service>
+        
+        <service id="srozeio.social_share.adapter.facebook" class="%srozeio.social_share.adapter.facebook.class%">
+            <tag name="srozeio.social_share.adapter" />
         </service>
     </services>
-    -->
 </container>

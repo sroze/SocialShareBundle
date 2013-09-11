@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                    http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="SRozeIO\SocialShareBundle\Entity\AuthToken" table="social_authtoken">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO" />
+        </id>
+        
+        <field name="accessToken" column="accessToken" type="string" />
+        <field name="refreshToken" column="refreshToken" type="string" nullable="true" />
+        <field name="expiresIn" column="expiresIn" type="integer" />
+        <field name="createdAt" column="createdAt" type="integer" />
+        <field name="tokenSecret" column="tokenSecret" type="string" nullable="true" />
+    </entity>
+</doctrine-mapping>
