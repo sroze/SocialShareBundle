@@ -106,7 +106,9 @@ class ShareBuilder
         foreach ($this->accounts as $account) {
             foreach ($this->adapters as $adapter) {
                 if ($adapter->supports($account)) {
-                    $adapter->share($account, $this->object, $this->message);
+                    $adapter->setObject($this->object);
+                    $adapter->setSocialAccount($account);
+                    $adapter->share($this->message);
                 }
             }
         }

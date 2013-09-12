@@ -18,11 +18,19 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('s_roze_io_social_share');
+        $rootNode = $treeBuilder->root('srozeio_social_share');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode->children()
+            ->arrayNode('adapters')
+                ->prototype('array')
+                ->children()
+                    ->scalarNode('type')->isRequired()->cannotBeEmpty()->end()
+                    ->scalarNode('client_id')->isRequired()->cannotBeEmpty()->end()
+                    ->scalarNode('client_secret')->isRequired()->cannotBeEmpty()->end()
+                    
+                    ->scalarNode('scope')->end()
+                ->end()
+            ->end();
 
         return $treeBuilder;
     }

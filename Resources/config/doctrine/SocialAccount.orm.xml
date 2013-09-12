@@ -10,6 +10,9 @@
         </id>
         
         <one-to-one field="token" target-entity="SRozeIO\SocialShareBundle\Entity\AuthToken">
+            <cascade>
+                <cascade-persist/>
+            </cascade>
             <join-column name="token_id" referenced-column-name="id" />
         </one-to-one>
         

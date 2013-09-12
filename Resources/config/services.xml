@@ -6,14 +6,31 @@
 
     <parameters>
         <parameter key="srozeio.social_share.builder.class">SRozeIO\SocialShareBundle\Social\ShareBuilder</parameter>
+        <parameter key="srozeio.social_share.abstract_adapter.class">SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter</parameter>
         <parameter key="srozeio.social_share.adapter.facebook.class">SRozeIO\SocialShareBundle\Social\Adapter\FacebookAdapter</parameter>
-    </parameters>
+        </parameters>
 
     <services>
         <service id="srozeio.social_share.builder" class="%srozeio.social_share.builder.class%"></service>
         
-        <service id="srozeio.social_share.adapter.facebook" class="%srozeio.social_share.adapter.facebook.class%">
-            <tag name="srozeio.social_share.adapter" />
+        <!-- Abstract adapter -->
+        <service id="srozeio.social_share.abstract_adapter" class="%srozeio.social_share.abstract_adapter.class%" abstract="true">
+            <argument type="service" id="buzz" />
+            <argument /> <!-- Name -->
+            <argument /> <!-- Parameters -->
         </service>
+        
+        <!-- Abstract social adapters -->
+        <service 
+            id="srozeio.social_share.abstract_adapter.facebook" 
+            class="%srozeio.social_share.adapter.facebook.class%"
+            parent="srozeio.social_share.abstract_adapter"
+            abstract="true" />
+        
+        <!-- You can add you custom adapters like that -->
+        <!-- <service id="srozeio.social_share.adapter.facebook" class="%srozeio.social_share.adapter.facebook.class%">
+            <argument type="service" id="buzz" />
+            <tag name="srozeio.social_share.adapter" />
+        </service> -->
     </services>
 </container>

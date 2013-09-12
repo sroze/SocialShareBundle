@@ -2,6 +2,10 @@
 
 namespace SRozeIO\SocialShareBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Reference;
+
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
+
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -24,5 +28,33 @@ class SRozeIOSocialShareExtension extends Extension
 
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+        
+        // Configure adapters
+        foreach ($config['adapters'] as $name => $options) {
+            $this->createAdapter($container, $name, $options);
+        }
+    }
+    
+    /**
+     * Create an adapter.
+     * 
+     * @param string $name
+     * @param array  $options
+     */
+    protected function createAdapter ($container, $name, array $options)
+    {
+        $type = $options['type'];
+        $definition = new DefinitionDecorator('srozeio.social_share.abstract_adapter.'.$type);
+        $id = 'srozeio.social_share.adapter.'.$name;
+        
+        $container->setDefinition($id, $definition);
+        $definition
+            ->replaceArgument(1, $name)
+            ->replaceArgument(2, $options)
+        ;
+        
+        // Add adapter to builder
+        $definition = $container->getDefinition('srozeio.social_share.builder');
+        $definition->addMethodCall('addAdapter', array(new Reference($id)));
     }
 }

@@ -11,8 +11,7 @@
         
         <field name="accessToken" column="accessToken" type="string" />
         <field name="refreshToken" column="refreshToken" type="string" nullable="true" />
-        <field name="expiresIn" column="expiresIn" type="integer" />
-        <field name="createdAt" column="createdAt" type="integer" />
-        <field name="tokenSecret" column="tokenSecret" type="string" nullable="true" />
+        <field name="expirationDate" column="expirationDate" type="datetime" />
+        <field name="creationDate" column="creationDate" type="datetime" />
     </entity>
 </doctrine-mapping>
