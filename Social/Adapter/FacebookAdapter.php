@@ -1,6 +1,10 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use SRozeIO\SocialShareBundle\Entity\SharedObject;
+
+use SRozeIO\SocialShareBundle\Social\Exception\ShareException;
+
 use Buzz\Message\Response;
 
 use SRozeIO\SocialShareBundle\Entity\AuthToken;
@@ -20,16 +24,13 @@ class FacebookAdapter extends AbstractOAuth2Adapter
 {
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::share()
+     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractOAuth2Adapter::getAuthorizationUrl()
      */
-    public function share ($message, array $options = array())
+    public function getAuthorizationUrl($redirectUrl, array $parameters = array()) 
     {
-        var_dump($message);
-        $this->resolveOptions($options);
-        var_dump($this->object != null);
-        if ($this->object != null) {
-            $object = $this->createObject();
-        }
+        return parent::getAuthorizationUrl($redirectUrl, array_merge(array(
+            'scope' => 'publish_actions,publish_stream'
+        ), $parameters));
     }
     
     /**
@@ -153,27 +154,41 @@ class FacebookAdapter extends AbstractOAuth2Adapter
             'authorization_url' => 'https://www.facebook.com/dialog/oauth'
         ));
     }
-    
+
     /**
-     * Create the OpenGraph object.
-     * 
+     * (non-PHPdoc)
+     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::share()
      */
-    protected function createObject ()
+    public function share ($message, array $options = array())
     {
-        // Create the graph object
-        $graphObject = array(
-            'type' => 'article',
-            'url' => $this->object->getLink(),
-            'title' => $this->object->getTitle(),
-            'description' => $this->object->getDescription()
-        );
+        $this->resolveOptions($options);
         
-        $objectUrl = 'https://graph.facebook.com/'.$this->account->getSocialId().'/objects/article?'.http_build_query(array(
-            'access_token' => $this->account->getToken(),
-            'object' => json_encode($graphObject)
+        // Share on user feed
+        $objectUrl = 'https://graph.facebook.com/'.$this->account->getSocialId().'/feed?'.http_build_query(array(
+            'method' => 'POST',
+            'access_token' => $this->account->getToken()->getAccessToken(),
+            'message' => $message,
+            'link' => $this->object->getLink(),
+            'picture' => $this->object->getImage(),
+            'description' => $this->object->getDescription(),
+            'name' => $this->object->getTitle()
         ));
-        $response = $this->buzz->get($objectUrl);
         
-        var_dump($response->getContent());
+        $response = $this->buzz->get($objectUrl);
+        $jsonResponse = json_decode($response->getContent(), true);
+        if (array_key_exists('error', $jsonResponse)) {
+            throw new ShareException($jsonResponse['error']['message'], $jsonResponse['error']['code']);
+        } else if (!array_key_exists('id', $jsonResponse)) {
+            throw new ShareException("Unable to share: malformated response");
+        }
+        
+        // Create the sharedobject
+        $sharedObject = new SharedObject();
+        $sharedObject->setProvider($this->getName());
+        $sharedObject->setMessage($message);
+        $sharedObject->setSocialId($jsonResponse['id']);
+        
+        // Add object to parent
+        $this->object->addSharedObject($sharedObject);
     }
 }

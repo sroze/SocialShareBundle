@@ -1,6 +1,8 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Object;
 
+use SRozeIO\SocialShareBundle\Entity\SharedObject;
+
 interface SharableObjectInterface
 {
     public function getTitle();
@@ -10,4 +12,6 @@ interface SharableObjectInterface
     public function getLink();
     
     public function getImage();
+    
+    public function addSharedObject(SharedObject $sharedObject);
 }
