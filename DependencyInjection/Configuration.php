@@ -28,6 +28,8 @@ class Configuration implements ConfigurationInterface
                     ->scalarNode('client_id')->isRequired()->cannotBeEmpty()->end()
                     ->scalarNode('client_secret')->isRequired()->cannotBeEmpty()->end()
                     
+                    ->scalarNode('request_visible_actions')->end()
+                    ->scalarNode('approval_prompt')->end()
                     ->scalarNode('scope')->end()
                 ->end()
             ->end();

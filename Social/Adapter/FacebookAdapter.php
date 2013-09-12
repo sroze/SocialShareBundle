@@ -28,9 +28,11 @@ class FacebookAdapter extends AbstractOAuth2Adapter
      */
     public function getAuthorizationUrl($redirectUrl, array $parameters = array()) 
     {
-        return parent::getAuthorizationUrl($redirectUrl, array_merge(array(
-            'scope' => 'publish_actions,publish_stream'
-        ), $parameters));
+        if (!array_key_exists('scope', $parameters) && array_key_exists('scope', $this->options)) {
+            $parameters['scope'] = $this->options['scope'];
+        }
+        
+        return parent::getAuthorizationUrl($redirectUrl, $parameters);
     }
     
     /**
@@ -42,7 +44,7 @@ class FacebookAdapter extends AbstractOAuth2Adapter
         $code = $request->get('code', null);
         $access_token = $request->get('access_token', null);
         if ($code != null) {
-            $response = $this->doGet('https://graph.facebook.com/oauth/access_token', array(
+            $response = $this->doGet($this->options['request_token_url'], array(
                 'client_id' => $this->options['client_id'],
                 'client_secret' => $this->options['client_secret'],
                 'redirect_uri' => $redirectUrl,
@@ -54,7 +56,7 @@ class FacebookAdapter extends AbstractOAuth2Adapter
         
         if ($access_token != null) {
             // Exchange accessToken with a long-lived
-            $response = $this->doGet('https://graph.facebook.com/oauth/access_token', array(
+            $response = $this->doGet($this->options['request_token_url'], array(
                 'client_id' => $this->options['client_id'],
                 'client_secret' => $this->options['client_secret'],
                 'grant_type' => 'fb_exchange_token',
@@ -149,9 +151,12 @@ class FacebookAdapter extends AbstractOAuth2Adapter
     protected function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
-        
+        $resolver->setOptional(array(
+            'scope'
+        ));
         $resolver->setDefaults(array(
-            'authorization_url' => 'https://www.facebook.com/dialog/oauth'
+            'authorization_url' => 'https://www.facebook.com/dialog/oauth',
+            'request_token_url' => 'https://graph.facebook.com/oauth/access_token'
         ));
     }
 

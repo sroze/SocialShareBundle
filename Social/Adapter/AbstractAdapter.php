@@ -137,6 +137,19 @@ abstract class AbstractAdapter
     }
     
     /**
+     * Perform a POST request.
+     * 
+     * @param string $url
+     * @param string|array $body
+     */
+    protected function doPost ($url, $body, $headers = array())
+    {
+        $content = is_array($body) ? http_build_query($body) : $body;
+        
+        return $this->buzz->post($url, $headers, $content);
+    }
+    
+    /**
      * Set the social account to use.
      * 
      * @param SocialAccount $account

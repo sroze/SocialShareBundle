@@ -8,6 +8,7 @@
         <parameter key="srozeio.social_share.builder.class">SRozeIO\SocialShareBundle\Social\ShareBuilder</parameter>
         <parameter key="srozeio.social_share.abstract_adapter.class">SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter</parameter>
         <parameter key="srozeio.social_share.adapter.facebook.class">SRozeIO\SocialShareBundle\Social\Adapter\FacebookAdapter</parameter>
+        <parameter key="srozeio.social_share.adapter.google.class">SRozeIO\SocialShareBundle\Social\Adapter\GooglePlusAdapter</parameter>
         </parameters>
 
     <services>
@@ -24,6 +25,12 @@
         <service 
             id="srozeio.social_share.abstract_adapter.facebook" 
             class="%srozeio.social_share.adapter.facebook.class%"
+            parent="srozeio.social_share.abstract_adapter"
+            abstract="true" />
+        
+        <service 
+            id="srozeio.social_share.abstract_adapter.google" 
+            class="%srozeio.social_share.adapter.google.class%"
             parent="srozeio.social_share.abstract_adapter"
             abstract="true" />
         

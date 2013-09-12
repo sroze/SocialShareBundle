@@ -32,6 +32,8 @@ abstract class AbstractOAuth2Adapter extends AbstractAdapter
         
         $resolver->setRequired(array(
             'authorization_url',
+            'request_token_url',
+            
             'client_id',
             'client_secret'
         ));
