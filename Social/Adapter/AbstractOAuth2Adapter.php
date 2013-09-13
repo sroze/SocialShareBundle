@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
 use SRozeIO\SocialShareBundle\Entity\SocialAccount;
 
-abstract class AbstractOAuth2Adapter extends AbstractAdapter
+abstract class AbstractOAuth2Adapter extends AbstractOAuthAdapter
 {
     /**
      * (non-PHPdoc)
@@ -32,10 +32,7 @@ abstract class AbstractOAuth2Adapter extends AbstractAdapter
         
         $resolver->setRequired(array(
             'authorization_url',
-            'request_token_url',
-            
-            'client_id',
-            'client_secret'
+            'request_token_url'
         ));
     }
 }

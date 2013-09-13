@@ -1,6 +1,8 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use SRozeIO\SocialShareBundle\Entity\OAuth2Token;
+
 use SRozeIO\SocialShareBundle\Entity\SharedObject;
 
 use SRozeIO\SocialShareBundle\Social\Exception\ShareException;
@@ -136,7 +138,7 @@ class GooglePlusAdapter extends AbstractOAuth2Adapter
             throw new AuthorizationException("Bad token request response");
         }
         
-        $token = new AuthToken();
+        $token = new OAuth2Token();
         $token->setAccessToken($jsonResponse['access_token']);
         if (array_key_exists('refresh_token', $jsonResponse)) {
             $token->setRefreshToken($jsonResponse['refresh_token']);

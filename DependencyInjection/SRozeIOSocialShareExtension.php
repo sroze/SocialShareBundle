@@ -49,8 +49,8 @@ class SRozeIOSocialShareExtension extends Extension
         
         $container->setDefinition($id, $definition);
         $definition
-            ->replaceArgument(1, $name)
-            ->replaceArgument(2, $options)
+            ->replaceArgument(0, $name)
+            ->replaceArgument(1, $options)
         ;
         
         // Add adapter to builder

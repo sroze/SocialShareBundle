@@ -1,11 +1,10 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Entity;
+
 class AuthToken
 {
     protected $id;
     protected $accessToken;
-    protected $refreshToken;
-    protected $expirationDate;
     protected $creationDate;
 
     /**
@@ -27,17 +26,6 @@ class AuthToken
     {
         $this->id = $id;
     }
-
-    /**
-     * Return the remaining time before the token expires.
-     * 
-     * @return integer Seconds (0 means expired)
-     */
-    public function getRemainingTime()
-    {
-        return $this->isExpired() ? 0
-                : ($this->getExpirationDate()->getTimestamp() - time());
-    }
     
     /**
      * Is this token expired ?
@@ -46,7 +34,7 @@ class AuthToken
      */
     public function isExpired ()
     {
-        return $this->getExpirationDate()->getTimestamp() < time();
+        return false;
     }
 
     /**
@@ -67,46 +55,6 @@ class AuthToken
     public function setAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
-    }
-
-    /**
-     * Return the unknown_type
-     *
-     * @return function
-     */
-    public function getRefreshToken()
-    {
-        return $this->refreshToken;
-    }
-
-    /**
-     * Set the $refreshToken
-     *
-     * @param unknown_type
-     */
-    public function setRefreshToken($refreshToken)
-    {
-        $this->refreshToken = $refreshToken;
-    }
-
-    /**
-     * Return the unknown_type
-     *
-     * @return \DateTime
-     */
-    public function getExpirationDate()
-    {
-        return $this->expirationDate;
-    }
-
-    /**
-     * Set the $expirationDate
-     *
-     * @param \DateTime
-     */
-    public function setExpirationDate(\DateTime $expirationDate)
-    {
-        $this->expirationDate = $expirationDate;
     }
 
     /**

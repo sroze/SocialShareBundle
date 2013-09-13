@@ -9,16 +9,18 @@
         <parameter key="srozeio.social_share.abstract_adapter.class">SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter</parameter>
         <parameter key="srozeio.social_share.adapter.facebook.class">SRozeIO\SocialShareBundle\Social\Adapter\FacebookAdapter</parameter>
         <parameter key="srozeio.social_share.adapter.google.class">SRozeIO\SocialShareBundle\Social\Adapter\GooglePlusAdapter</parameter>
-        </parameters>
+        <parameter key="srozeio.social_share.adapter.twitter.class">SRozeIO\SocialShareBundle\Social\Adapter\TwitterAdapter</parameter>
+    </parameters>
 
     <services>
         <service id="srozeio.social_share.builder" class="%srozeio.social_share.builder.class%"></service>
         
         <!-- Abstract adapter -->
         <service id="srozeio.social_share.abstract_adapter" class="%srozeio.social_share.abstract_adapter.class%" abstract="true">
-            <argument type="service" id="buzz" />
             <argument /> <!-- Name -->
             <argument /> <!-- Parameters -->
+            <argument type="service" id="buzz" />
+            <argument type="service" id="session" />
         </service>
         
         <!-- Abstract social adapters -->
@@ -31,6 +33,12 @@
         <service 
             id="srozeio.social_share.abstract_adapter.google" 
             class="%srozeio.social_share.adapter.google.class%"
+            parent="srozeio.social_share.abstract_adapter"
+            abstract="true" />
+        
+        <service 
+            id="srozeio.social_share.abstract_adapter.twitter" 
+            class="%srozeio.social_share.adapter.twitter.class%"
             parent="srozeio.social_share.abstract_adapter"
             abstract="true" />
         

@@ -1,10 +1,14 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use SRozeIO\SocialShareBundle\Social\Session\TokenBag;
+
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
+use Buzz\Message\MessageInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
@@ -52,14 +56,30 @@ abstract class AbstractAdapter
     protected $name;
     
     /**
+     * The session.
+     * 
+     * @see http://api.symfony.com/2.3/Symfony/Component/HttpFoundation/Session/SessionInterface.html
+     * @var SessionInterface
+     */
+    protected $session;
+    
+    /**
+     * The TokenBag.
+     * 
+     * @var TokenBag
+     */
+    protected $tokenBag = null;
+    
+    /**
      * Constructor of adapter.
      * 
      * @param Buzz\Browser $buzz
      */
-    public function __construct (\Buzz\Browser $buzz, $name, array $options)
+    public function __construct ($name, array $options, \Buzz\Browser $buzz, SessionInterface $session)
     {
         $this->buzz = $buzz;
         $this->name = $name;
+        $this->session = $session;
         
         $this->options = $this->resolveOptions($options);
     }
@@ -97,6 +117,20 @@ abstract class AbstractAdapter
     public function getName ()
     {
         return $this->name;
+    }
+    
+    /**
+     * Get a SessionBag from the session.
+     * 
+     * @return TokenBag
+     */
+    public function getTokenBag ()
+    {
+        if ($this->tokenBag == null) {
+            $this->tokenBag = new TokenBag($this->session);
+        }
+        
+        return $this->tokenBag;
     }
     
     /**
@@ -147,6 +181,32 @@ abstract class AbstractAdapter
         $content = is_array($body) ? http_build_query($body) : $body;
         
         return $this->buzz->post($url, $headers, $content);
+    }
+
+    /**
+     * Get the 'parsed' content based on the response headers.
+     * 
+     * It could be a parsed JSON body or an URL-encoded string decoded
+     * with the parse_str function.
+     *
+     * @param MessageInterface $rawResponse
+     *
+     * @return array
+     */
+    protected function getResponseContent(MessageInterface $rawResponse)
+    {
+        // First check that content in response exists, due too bug: https://bugs.php.net/bug.php?id=54484
+        $content = $rawResponse->getContent();
+        if (!$content) {
+            return array();
+        }
+
+        $response = json_decode($content, true);
+        if (JSON_ERROR_NONE !== json_last_error()) {
+            parse_str($content, $response);
+        }
+
+        return $response;
     }
     
     /**

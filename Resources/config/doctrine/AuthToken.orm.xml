@@ -4,14 +4,21 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                     http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="SRozeIO\SocialShareBundle\Entity\AuthToken" table="social_authtoken">
+    <entity name="SRozeIO\SocialShareBundle\Entity\AuthToken" table="social_authtoken"
+            inheritance-type="SINGLE_TABLE">
+        <discriminator-column name="tokenType" type="string" />
+        
+	    <discriminator-map>
+	        <discriminator-mapping value="auth" class="SRozeIO\SocialShareBundle\Entity\AuthToken" />
+	        <discriminator-mapping value="oauth1" class="SRozeIO\SocialShareBundle\Entity\OAuth1Token" />
+	        <discriminator-mapping value="oauth2" class="SRozeIO\SocialShareBundle\Entity\OAuth2Token" />
+	    </discriminator-map>
+	    
         <id name="id" type="integer" column="id">
             <generator strategy="AUTO" />
         </id>
         
         <field name="accessToken" column="accessToken" type="string" />
-        <field name="refreshToken" column="refreshToken" type="string" nullable="true" />
-        <field name="expirationDate" column="expirationDate" type="datetime" />
         <field name="creationDate" column="creationDate" type="datetime" />
     </entity>
 </doctrine-mapping>

@@ -1,6 +1,8 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use SRozeIO\SocialShareBundle\Entity\OAuth2Token;
+
 use SRozeIO\SocialShareBundle\Entity\SharedObject;
 
 use SRozeIO\SocialShareBundle\Social\Exception\ShareException;
@@ -76,7 +78,7 @@ class FacebookAdapter extends AbstractOAuth2Adapter
             }
             
             // Create the access token object
-            $token = new AuthToken();
+            $token = new OAuth2Token();
             $token->setAccessToken($access_token);
             $token->setCreationDate(new \DateTime());
             $token->setExpirationDate(\DateTime::createFromFormat('U', $jsonResponse['data']['expires_at']));
