@@ -139,7 +139,7 @@ class FacebookAdapter extends AbstractOAuth2Adapter
         $this->resolveOptions($options);
         
         // Share on user feed
-        $response = $this->doAuthorizedGet('https://graph.facebook.com/'.$this->account->getSocialId().'/feed', array(
+        $rawResponse = $this->doAuthorizedGet('https://graph.facebook.com/'.$this->account->getSocialId().'/feed', array(
             'method' => 'POST',
             'message' => $message,
             'link' => $this->object->getLink(),
@@ -147,6 +147,7 @@ class FacebookAdapter extends AbstractOAuth2Adapter
             'description' => $this->object->getDescription(),
             'name' => $this->object->getTitle()
         ));
+        $response = $this->getResponseContent($rawResponse);
         
         if (array_key_exists('error', $response)) {
             throw new ShareException($response['error']['message'], $response['error']['code']);
@@ -158,7 +159,8 @@ class FacebookAdapter extends AbstractOAuth2Adapter
         $sharedObject = new SharedObject();
         $sharedObject->setProvider($this->getName());
         $sharedObject->setMessage($message);
-        $sharedObject->setSocialId($jsonResponse['id']);
+        $sharedObject->setSocialId($response['id']);
+        $sharedObject->setSocialAccount($this->account);
         
         // Add object to parent
         $this->object->addSharedObject($sharedObject);

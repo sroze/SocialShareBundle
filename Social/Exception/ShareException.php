@@ -1,7 +1,7 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Exception;
 
-class ShareException extends \Exception
+class ShareException extends SocialException
 {
     
 }

@@ -33,6 +33,13 @@ class SharedObject extends AbstractSharedObject
     protected $message;
 
     /**
+     * Social account used to share this object.
+     * 
+     * @var SocialAccount
+     */
+    protected $socialAccount;
+
+    /**
      * Get id
      *
      * @return integer
@@ -105,4 +112,23 @@ class SharedObject extends AbstractSharedObject
         $this->message = $message;
     }
 
+    /**
+     * Get social account used to share object.
+     * 
+     * @return \SRozeIO\SocialShareBundle\Entity\SocialAccount
+     */
+    public function getSocialAccount()
+    {
+        return $this->socialAccount;
+    }
+
+    /**
+     * Set social account used to share object.
+     * 
+     * @param SocialAccount $socialAccout
+     */
+    public function setSocialAccount(SocialAccount $socialAccount)
+    {
+        $this->socialAccount = $socialAccount;
+    }
 }

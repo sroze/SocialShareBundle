@@ -1,6 +1,8 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use SRozeIO\SocialShareBundle\Social\Exception\SocialException;
+
 use SRozeIO\SocialShareBundle\Social\Exception\AuthorizationException;
 
 use SRozeIO\SocialShareBundle\Entity\AuthToken;
@@ -35,18 +37,33 @@ use SRozeIO\SocialShareBundle\Entity\SocialAccount;
 abstract class AbstractAdapter
 {
     /**
+     * A buzz browser instance.
+     * 
+     * @var \Buzz\Browser
+     */
+    private $buzz;
+    
+    /**
+     * The session.
+     * 
+     * @see http://api.symfony.com/2.3/Symfony/Component/HttpFoundation/Session/SessionInterface.html
+     * @var SessionInterface
+     */
+    private $session;
+    
+    /**
+     * The TokenBag.
+     * 
+     * @var TokenBag
+     */
+    private $tokenBag = null;
+    
+    /**
      * The resolved options.
      * 
      * @var array
      */
     protected $options;
-    
-    /**
-     * A buzz browser instance.
-     * 
-     * @var \Buzz\Browser
-     */
-    protected $buzz;
     
     /**
      * The object to be shared.
@@ -68,21 +85,6 @@ abstract class AbstractAdapter
      * @var string
      */
     protected $name;
-    
-    /**
-     * The session.
-     * 
-     * @see http://api.symfony.com/2.3/Symfony/Component/HttpFoundation/Session/SessionInterface.html
-     * @var SessionInterface
-     */
-    protected $session;
-    
-    /**
-     * The TokenBag.
-     * 
-     * @var TokenBag
-     */
-    protected $tokenBag = null;
     
     /**
      * Constructor of adapter.
@@ -188,8 +190,12 @@ abstract class AbstractAdapter
     protected function doGet ($url, array $parameters)
     {
         $computedUrl = $url.'?'.http_build_query($parameters);
-        
-        return $this->buzz->get($computedUrl);
+            
+        try {
+            return $this->buzz->get($computedUrl);
+        } catch (ClientException $e) {
+            throw new SocialException($e->getMessage(), $e->getCode(), $e);
+        }
     }
     
     /**
@@ -209,7 +215,11 @@ abstract class AbstractAdapter
             $content = $body;
         }
         
-        return $this->buzz->post($url, $headers, $content);
+        try {
+            return $this->buzz->post($url, $headers, $content);
+        } catch (ClientException $e) {
+            throw new SocialException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**

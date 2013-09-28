@@ -156,7 +156,7 @@ abstract class AbstractOAuth2Adapter extends AbstractOAuthAdapter
             throw new \RuntimeException("An OAuth2Token should be passed");
         }
         
-        if (!$token->getRemainingTime() > 120) {
+        if ($token->getRemainingTime() > 120) {
             return true;
         }
         

@@ -89,6 +89,7 @@ class TwitterAdapter extends AbstractOAuth1Adapter
         $sharedObject->setProvider($this->getName());
         $sharedObject->setMessage($message);
         $sharedObject->setSocialId($response['id']);
+        $sharedObject->setSocialAccount($this->account);
         
         // Add object to parent
         $this->object->addSharedObject($sharedObject);

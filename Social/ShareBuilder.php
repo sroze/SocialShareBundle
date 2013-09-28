@@ -1,6 +1,10 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social;
 
+use SRozeIO\SocialShareBundle\Social\Exception\SocialException;
+
+use SRozeIO\SocialShareBundle\Social\Exception\ShareException;
+
 use SRozeIO\SocialShareBundle\Entity\SocialAccount;
 use SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter;
 use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
@@ -27,14 +31,21 @@ class ShareBuilder
      * 
      * @var multitype:AbstractAdapter
      */
-    protected $adapters;
+    protected $adapters = array();
     
     /**
      * An array containing the targeted social accounts.
      * 
      * @var multitype:SocialAccount
      */
-    protected $accounts;
+    protected $accounts = array();
+    
+    /**
+     * Errors occured during the share process.
+     * 
+     * @var array
+     */
+    protected $errors = array();
     
     /**
      * The message that will be join to shared object.
@@ -44,14 +55,11 @@ class ShareBuilder
     protected $message;
     
     /**
-     * The object to share.
+     * Adapters options.
      * 
+     * @var array
      */
-    public function __construct ()
-    {
-        $this->adapters = array();
-        $this->accounts = array();
-    }
+    protected $options = array();
     
     /**
      * Set the sharable object.
@@ -88,6 +96,26 @@ class ShareBuilder
     }
     
     /**
+     * Set adapter options.
+     * 
+     * @param string $name
+     * @param array  $options
+     * @throws ShareException
+     */
+    public function setAdapterOptions ($name, array $options)
+    {
+        foreach ($this->adapters as $adapter) {
+            if ($adapter->getName() == $name) {
+                $this->options[$name] = $options;
+                
+                return;
+            }
+        }
+        
+        throw new ShareException(sprintf('Adapter %s not found', $name));
+    }
+    
+    /**
      * Set the message to be shared with object.
      * 
      * @param string $message
@@ -98,29 +126,83 @@ class ShareBuilder
     }
     
     /**
+     * Get errors.
+     * 
+     * @return array
+     */
+    public function getErrors ()
+    {
+        return $this->errors;
+    }
+    
+    /**
+     * Does errors appears during share process ?
+     * 
+     * @return boolean
+     */
+    public function hasErrors ()
+    {
+        return count($this->errors) > 0;
+    }
+    
+    /**
      * Launch the share process.
      * 
+     * Must check errors to know if some action failed.
+     * 
+     * @return boolean True if share process started
      */
     public function share ()
     {
-        // Refresh tokens
+        // Try to refresh tokens
         foreach ($this->accounts as $account) {
             foreach ($this->adapters as $adapter) {
                 if ($adapter->supports($account)) {
-                    $adapter->refreshToken($account->getToken());
+                    try {
+                        $adapter->refreshToken($account->getToken());
+                    } catch (SocialException $e) {
+                        $this->errors[] = array(
+                            'code' => $e->getCode(),
+                            'message' => $e->getMessage(),
+                            'account' => $account,
+                            'adapter' => $adapter
+                        );
+                    }
                 }
             }
+        }
+        
+        // If errors appears during token refresh, stop here
+        if ($this->hasErrors()) {
+            return false;
         }
         
         // Start the share process
         foreach ($this->accounts as $account) {
             foreach ($this->adapters as $adapter) {
+                // If adapter supports account, use it to share
+                // the object.
                 if ($adapter->supports($account)) {
                     $adapter->setObject($this->object);
                     $adapter->setSocialAccount($account);
-                    $adapter->share($this->message);
+                    
+                    try {
+                        $adapter->share(
+                            $this->message,
+                            array_key_exists($adapter->getName(), $this->options) ? $this->options[$adapter->getName()] : array()
+                        );
+                    } catch (SocialException $e) {
+                        $this->errors[] = array(
+                            'code' => $e->getCode(),
+                            'message' => $e->getMessage(),
+                            'account' => $account,
+                            'adapter' => $adapter
+                        );
+                    }
                 }
             }
         }
+        
+        return true;
     }
 }

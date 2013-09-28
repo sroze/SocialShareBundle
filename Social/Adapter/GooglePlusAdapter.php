@@ -148,6 +148,7 @@ class GooglePlusAdapter extends AbstractOAuth2Adapter
         $sharedObject->setMessage($message);
         $sharedObject->setProvider($this->getName());
         $sharedObject->setSocialId($jsonResponse['id']);
+        $sharedObject->setSocialAccount($this->account);
         
         // Add object to parent
         $this->object->addSharedObject($sharedObject);
