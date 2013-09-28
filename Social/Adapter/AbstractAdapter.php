@@ -1,6 +1,16 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use Symfony\Component\Serializer\Serializer;
+
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+
+use Symfony\Component\Config\Util\XmlUtils;
+
 use SRozeIO\SocialShareBundle\Social\Session\TokenBag;
 
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -201,12 +211,30 @@ abstract class AbstractAdapter
             return array();
         }
 
-        $response = json_decode($content, true);
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            parse_str($content, $response);
+        // Depending on content-type header if found
+        $contentType = $rawResponse->getHeader('Content-Type');
+        if (strpos($contentType, 'text/xml') === 0) {
+            return json_decode(json_encode((array)simplexml_load_string($content)),1);
+        } else if (strpos($contentType, 'application/json')) {
+            return json_decode($content, true);
         }
-
+        
+        // Fallback to urlencoded
+        parse_str($content, $response);
         return $response;
+    }
+    
+    /**
+     * Get the serializer.
+     * 
+     * @return \Symfony\Component\Serializer\Serializer
+     */
+    protected function getSerializer ($rootNodeName = 'share')
+    {
+        $encoders = array(new XmlEncoder($rootNodeName), new JsonEncoder());
+        $normalizers = array(new GetSetMethodNormalizer());
+        
+        return new Serializer($normalizers, $encoders);
     }
     
     /**
