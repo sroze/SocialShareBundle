@@ -121,8 +121,8 @@ class GooglePlusAdapter extends AbstractOAuth2Adapter
         $content = json_encode(array(
             'type' => 'http://schemas.google.com/CreateActivity',
             'target' => array(
-                'id' => 'afuckingid',
-                //'url' => $this->object->getLink(),
+                'id' => $this->generateNonce(),
+                'url' => $this->object->getLink(),
                 'type' => 'http://schema.org/WebPage',
                 'name' => $message,
                 'caption' => $this->object->getTitle(),
@@ -140,7 +140,8 @@ class GooglePlusAdapter extends AbstractOAuth2Adapter
         
         $jsonResponse = json_decode($response->getContent(), true);
         if (array_key_exists('error', $jsonResponse)) {
-            throw new ShareException("Unable to share to G+: ".json_encode($jsonResponse['error']));
+            $errorMessage = $jsonResponse['error']['message'];
+            throw new ShareException("Unable to share to G+: ".$errorMessage);
         }
         
         // Create the shared object
