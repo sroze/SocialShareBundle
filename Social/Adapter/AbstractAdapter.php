@@ -1,6 +1,10 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use SRozeIO\SocialShareBundle\Social\Exception\AuthorizationException;
+
+use SRozeIO\SocialShareBundle\Entity\AuthToken;
+
 use Symfony\Component\Serializer\Serializer;
 
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
@@ -165,6 +169,14 @@ abstract class AbstractAdapter
      * @param Request $request
      */
     abstract public function handleAuthorizationResponse (Request $request, $redirectUrl);
+    
+    /**
+     * Refresh a token.
+     * 
+     * @param AuthToken $token
+     * @throws AuthorizationException
+     */
+    abstract public function refreshToken (AuthToken $token);
     
     /**
      * Perform a GET request.

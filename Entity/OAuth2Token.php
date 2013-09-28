@@ -46,6 +46,16 @@ class OAuth2Token extends AuthToken
     {
         return $this->refreshToken;
     }
+    
+    /**
+     * Is this token containing a refresh token ?
+     * 
+     * @return boolean
+     */
+    public function hasRefreshToken ()
+    {
+        return $this->refreshToken != null;
+    }
 
     /**
      * Set the $refreshToken

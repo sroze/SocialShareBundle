@@ -1,6 +1,8 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use SRozeIO\SocialShareBundle\Social\Exception\TokenException;
+
 use SRozeIO\SocialShareBundle\Entity\OAuth2Token;
 
 use SRozeIO\SocialShareBundle\Entity\SharedObject;
@@ -28,9 +30,6 @@ class GooglePlusAdapter extends AbstractOAuth2Adapter
      */
     public function getAuthorizationUrl($redirectUrl, array $parameters = array())
     {
-        if (!array_key_exists('scope', $parameters) && array_key_exists('scope', $this->options)) {
-            $parameters['scope'] = $this->options['scope'];
-        }
         if (!array_key_exists('request_visible_actions', $parameters)
             && array_key_exists('request_visible_actions', $this->options)) {
             $parameters['request_visible_actions'] = $this->options['request_visible_actions'];
@@ -63,6 +62,7 @@ class GooglePlusAdapter extends AbstractOAuth2Adapter
         $resolver->setDefaults(array(
             'authorization_url' => 'https://accounts.google.com/o/oauth2/auth',
             'request_token_url' => 'https://accounts.google.com/o/oauth2/token',
+            'user_informations_url' => 'https://www.googleapis.com/oauth2/v3/userinfo',
             
             'response_type' => 'code',
             'scope' => 'openid profile',
@@ -72,84 +72,39 @@ class GooglePlusAdapter extends AbstractOAuth2Adapter
     
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::handleAuthorizationResponse()
+     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractOAuth2Adapter::getUserInformations()
      */
-    public function handleAuthorizationResponse(Request $request, $redirectUrl) 
+    protected function getUserInformations (OAuth2Token $token)
     {
-        if (($error = $request->get('error', null)) != null) {
-            throw new AuthorizationException("Unable to authenticate user: ".$error);
-        } else if (($code = $request->get('code', null)) != null) {
-            $token = $this->requestToken($code, $redirectUrl);
-            $informations = $this->requestUserInformations($token);
-            
-            // Create the account object
-            $account = new SocialAccount();
-            $account->setProvider($this->getName());
-            $account->setSocialId($informations['sub']);
-            $account->setToken($token);
-            $account->setRealname($informations['name']);
-            
-            return $account;
-        } else {
-            throw new AuthorizationException("Unable to authenticate user, bad response.");
-        }
-    }
-    
-    /**
-     * Request the user informations.
-     * 
-     * @param AuthToken $token
-     */
-    protected function requestUserInformations (AuthToken $token)
-    {
-        $response = $this->doGet('https://www.googleapis.com/oauth2/v3/userinfo', array(
-            'access_token' => $token->getAccessToken()
-        ));
-        
-        $jsonResponse = json_decode($response->getContent(), true);
-        if ($jsonResponse == null || array_key_exists('error', $jsonResponse)) {
-            throw new AuthorizationException("Unable to grab user informations");
-        } else if (!array_key_exists('sub', $jsonResponse)) {
+        $response = parent::getUserInformations($token);
+        if (!array_key_exists('sub', $response)) {
             throw new AuthorizationException("Unable to get user ID (sub)");
         }
         
-        return $jsonResponse;
+        // Set response minimum parameters
+        $response['id'] = $response['sub'];
+        
+        return $response;
     }
     
     /**
-     * Request for a token based on the code.
-     * 
-     * @param string $code
-     * @param string $redirectUrl
-     * @return AuthToken
+     * (non-PHPdoc)
+     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractOAuth2Adapter::doRefreshToken()
      */
-    protected function requestToken ($code, $redirectUrl)
+    public function doRefreshToken (OAuth2Token $token)
     {
-        $response = $this->doPost($this->options['request_token_url'], array(
-            'code' => $code,
+        if (!$token->hasRefreshToken()) {
+            throw new TokenException('Unable to refresh token without a refresh token');
+        }
+        
+        $rawResponse = $this->doPost($this->options['request_token_url'], array(
             'client_id' => $this->options['client_id'],
             'client_secret' => $this->options['client_secret'],
-            'redirect_uri' => $redirectUrl,
-            'grant_type' => 'authorization_code'
+            'refresh_token' => $token->getRefreshToken(),
+            'grant_type' => 'refresh_token'
         ));
-        
-        $jsonResponse = json_decode($response->getContent(), true);
-        if (!array_key_exists('access_token', $jsonResponse)) {
-            throw new AuthorizationException("Bad token request response");
-        }
-        
-        $token = new OAuth2Token();
-        $token->setAccessToken($jsonResponse['access_token']);
-        if (array_key_exists('refresh_token', $jsonResponse)) {
-            $token->setRefreshToken($jsonResponse['refresh_token']);
-        }
-        
-        $expirationDate = new \DateTime();
-        $expirationDate->add(new \DateInterval('PT'.$jsonResponse['expires_in'].'S'));
-        $token->setExpirationDate($expirationDate);
-        $token->setCreationDate(new \DateTime());
-        
-        return $token;
+        $response = $this->getResponseContent($rawResponse);
+        $this->populateToken($token, $response);
     }
     
     /**

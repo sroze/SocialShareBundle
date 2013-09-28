@@ -1,6 +1,8 @@
 <?php
 namespace SRozeIO\SocialShareBundle\Social\Adapter;
 
+use SRozeIO\SocialShareBundle\Entity\AuthToken;
+
 use SRozeIO\SocialShareBundle\Social\Exception\ShareException;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -186,5 +188,17 @@ abstract class AbstractOAuth1Adapter extends AbstractOAuthAdapter
         }
         
         return $response;
+    }
+    
+    /**
+     * Refresh OAuth1 token.
+     * 
+     * Because OAuth1 tokens don't expires, always return true.
+     * 
+     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::refreshToken()
+     */
+    public function refreshToken (AuthToken $token)
+    {
+        return true;
     }
 }

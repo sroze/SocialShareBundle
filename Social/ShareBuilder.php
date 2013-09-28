@@ -103,6 +103,16 @@ class ShareBuilder
      */
     public function share ()
     {
+        // Refresh tokens
+        foreach ($this->accounts as $account) {
+            foreach ($this->adapters as $adapter) {
+                if ($adapter->supports($account)) {
+                    $adapter->refreshToken($account->getToken());
+                }
+            }
+        }
+        
+        // Start the share process
         foreach ($this->accounts as $account) {
             foreach ($this->adapters as $adapter) {
                 if ($adapter->supports($account)) {

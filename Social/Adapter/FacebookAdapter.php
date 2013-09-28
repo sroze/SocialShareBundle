@@ -26,19 +26,6 @@ class FacebookAdapter extends AbstractOAuth2Adapter
 {
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractOAuth2Adapter::getAuthorizationUrl()
-     */
-    public function getAuthorizationUrl($redirectUrl, array $parameters = array()) 
-    {
-        if (!array_key_exists('scope', $parameters) && array_key_exists('scope', $this->options)) {
-            $parameters['scope'] = $this->options['scope'];
-        }
-        
-        return parent::getAuthorizationUrl($redirectUrl, $parameters);
-    }
-    
-    /**
-     * (non-PHPdoc)
      * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::handleAuthorizationResponse()
      */
     public function handleAuthorizationResponse(Request $request, $redirectUrl) 
@@ -90,31 +77,13 @@ class FacebookAdapter extends AbstractOAuth2Adapter
             $account->setToken($token);
             
             // Get user informations
-            $informations = $this->getUserInformations($account);
+            $informations = $this->getUserInformations($token);
             $account->setRealname($informations['name']);
             
             return $account;
         }
         
         throw new AuthorizationException("Unable to authenticate user");
-    }
-    
-    /**
-     * Get the user informations.
-     * 
-     * @param SocialAccount $account
-     */
-    protected function getUserInformations (SocialAccount $account)
-    {
-        $response = $this->doGet('https://graph.facebook.com/'.$account->getSocialId(), array(
-            'access_token' => $account->getToken()->getAccessToken()
-        ));
-        $jsonResponse = json_decode($response->getContent(), true);
-        if (array_key_exists('error', $jsonResponse)) {
-            throw new AuthorizationException($jsonResponse['error']['message'], $jsonResponse['error']['code']);
-        }
-        
-        return $jsonResponse;
     }
     
     /**
@@ -153,12 +122,11 @@ class FacebookAdapter extends AbstractOAuth2Adapter
     protected function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         parent::setDefaultOptions($resolver);
-        $resolver->setOptional(array(
-            'scope'
-        ));
+        
         $resolver->setDefaults(array(
             'authorization_url' => 'https://www.facebook.com/dialog/oauth',
-            'request_token_url' => 'https://graph.facebook.com/oauth/access_token'
+            'request_token_url' => 'https://graph.facebook.com/oauth/access_token',
+            'user_informations_url' => 'https://graph.facebook.com/me'
         ));
     }
 
@@ -171,9 +139,8 @@ class FacebookAdapter extends AbstractOAuth2Adapter
         $this->resolveOptions($options);
         
         // Share on user feed
-        $objectUrl = 'https://graph.facebook.com/'.$this->account->getSocialId().'/feed?'.http_build_query(array(
+        $response = $this->doAuthorizedGet('https://graph.facebook.com/'.$this->account->getSocialId().'/feed', array(
             'method' => 'POST',
-            'access_token' => $this->account->getToken()->getAccessToken(),
             'message' => $message,
             'link' => $this->object->getLink(),
             'picture' => $this->object->getImage(),
@@ -181,11 +148,9 @@ class FacebookAdapter extends AbstractOAuth2Adapter
             'name' => $this->object->getTitle()
         ));
         
-        $response = $this->buzz->get($objectUrl);
-        $jsonResponse = json_decode($response->getContent(), true);
-        if (array_key_exists('error', $jsonResponse)) {
-            throw new ShareException($jsonResponse['error']['message'], $jsonResponse['error']['code']);
-        } else if (!array_key_exists('id', $jsonResponse)) {
+        if (array_key_exists('error', $response)) {
+            throw new ShareException($response['error']['message'], $response['error']['code']);
+        } else if (!array_key_exists('id', $response)) {
             throw new ShareException("Unable to share: malformated response");
         }
         

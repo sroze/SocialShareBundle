@@ -39,9 +39,9 @@ class LinkedInAdapter extends AbstractOAuth2Adapter
         $parameters = array_merge(array(
             'response_type' => $this->options['response_type'],
             'state' => $state
-            //'access_type' => $this->options['access_type']
         ), $parameters);
         $this->getTokenBag()->set($this, $parameters);
+        
         return parent::getAuthorizationUrl($redirectUrl, $parameters);
     }
     
@@ -54,19 +54,17 @@ class LinkedInAdapter extends AbstractOAuth2Adapter
         parent::setDefaultOptions($resolver);
         $resolver->setOptional(array(
             'scope',
-            'response_type',
-            //'access_type',
-            //'request_visible_actions',
-            //'approval_prompt'
+            'response_type'
         ));
         
         $resolver->setDefaults(array(
             'authorization_url' => 'https://www.linkedin.com/uas/oauth2/authorization',
             'request_token_url' => 'https://www.linkedin.com/uas/oauth2/accessToken',
-            
-            'response_type' => 'code',
-            //'scope' => 'openid profile',
-            //'access_type' => 'offline'
+            'user_informations_url' => 'https://api.linkedin.com/v1/people/~:(id,first-name,last-name)',
+                
+            'access_token_parameter_name' => 'oauth2_access_token',
+                
+            'response_type' => 'code'
         ));
     }
     
@@ -76,86 +74,33 @@ class LinkedInAdapter extends AbstractOAuth2Adapter
      */
     public function handleAuthorizationResponse(Request $request, $redirectUrl) 
     {
-        if (($error = $request->get('error', null)) != null) {
-            throw new AuthorizationException("Unable to authenticate user: ".$error);
-        } else if (($code = $request->get('code', null)) != null) {
+        if ($request->get('error', null) == null) {
             // Check state code
             $parameters = $this->getTokenBag()->get($this);
             if ($request->get('state', null) != $parameters['state']) {
                 throw new AuthorizationException("CSRF token is invalid");
             }
-            
-            $token = $this->requestToken($code, $redirectUrl);
-            $informations = $this->requestUserInformations($token);
-            
-            // Create the account object
-            $account = new SocialAccount();
-            $account->setProvider($this->getName());
-            $account->setSocialId($informations['id']);
-            $account->setToken($token);
-            $account->setRealname($informations['first-name'].' '.$informations['last-name']);
-            
-            return $account;
-        } else {
-            throw new AuthorizationException("Unable to authenticate user, bad response.");
         }
+        
+        return parent::handleAuthorizationResponse($request, $redirectUrl);
     }
     
     /**
-     * Request the user informations.
-     * 
-     * @param AuthToken $token
+     * (non-PHPdoc)
+     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractOAuth2Adapter::getUserInformations()
      */
-    protected function requestUserInformations (AuthToken $token)
+    protected function getUserInformations (OAuth2Token $token)
     {
-        $response = $this->doGet('https://api.linkedin.com/v1/people/~:(id,first-name,last-name)', array(
-            'oauth2_access_token' => $token->getAccessToken()
-        ));
-        
-        $response = $this->getResponseContent($response);
-        if ($response == null || array_key_exists('error', $response)) {
-            throw new AuthorizationException("Unable to grab user informations");
-        } else if (!array_key_exists('id', $response)) {
+        $response = parent::getUserInformations($token);
+        if (!array_key_exists('id', $response)) {
+            var_dump($response);
             throw new AuthorizationException("Unable to get user ID");
         }
         
+        // Set the realname parameter
+        $response['name'] = $response['first-name'].' '.$response['last-name'];
+        
         return $response;
-    }
-    
-    /**
-     * Request for a token based on the code.
-     * 
-     * @param string $code
-     * @param string $redirectUrl
-     * @return AuthToken
-     */
-    protected function requestToken ($code, $redirectUrl)
-    {
-        $response = $this->doPost($this->options['request_token_url'], array(
-            'code' => $code,
-            'client_id' => $this->options['client_id'],
-            'client_secret' => $this->options['client_secret'],
-            'redirect_uri' => $redirectUrl,
-            'grant_type' => 'authorization_code'
-        ));
-        
-        $jsonResponse = json_decode($response->getContent(), true);
-        if (!array_key_exists('access_token', $jsonResponse)) {
-            throw new AuthorizationException("Bad token request response");
-        }
-        
-        $token = new OAuth2Token();
-        $token->setAccessToken($jsonResponse['access_token']);
-        if (array_key_exists('refresh_token', $jsonResponse)) {
-            $token->setRefreshToken($jsonResponse['refresh_token']);
-        }
-        
-        $expirationDate = new \DateTime();
-        $expirationDate->add(new \DateInterval('PT'.$jsonResponse['expires_in'].'S'));
-        $token->setExpirationDate($expirationDate);
-        $token->setCreationDate(new \DateTime());
-        
-        return $token;
     }
     
     /**
