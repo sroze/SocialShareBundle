@@ -188,7 +188,14 @@ abstract class AbstractAdapter
      */
     protected function doPost ($url, $body, $headers = array())
     {
-        $content = is_array($body) ? http_build_query($body) : $body;
+        if (is_array($body)) {
+            $content = http_build_query($body);
+            if (!array_key_exists('Content-Type', $headers)) {
+                $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            }
+        } else {
+            $content = $body;
+        }
         
         return $this->buzz->post($url, $headers, $content);
     }
@@ -215,7 +222,7 @@ abstract class AbstractAdapter
         $contentType = $rawResponse->getHeader('Content-Type');
         if (strpos($contentType, 'text/xml') === 0) {
             return json_decode(json_encode((array)simplexml_load_string($content)),1);
-        } else if (strpos($contentType, 'application/json')) {
+        } else if (strpos($contentType, 'application/json') === 0) {
             return json_decode($content, true);
         }
         

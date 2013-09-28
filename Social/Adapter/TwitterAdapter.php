@@ -77,10 +77,10 @@ class TwitterAdapter extends AbstractOAuth1Adapter
             'status' => $message
         );
         
-        $jsonResponse = $this->doPost($objectUrl, $body);
-        if (array_key_exists('error', $jsonResponse)) {
-            throw new ShareException($jsonResponse['error']['message'], $jsonResponse['error']['code']);
-        } else if (!array_key_exists('id', $jsonResponse)) {
+        $response = $this->doAuthorizedPost($objectUrl, $body);
+        if (array_key_exists('errors', $response)) {
+            throw new ShareException($response['errors'][0]['message'], $response['errors'][0]['code']);
+        } else if (!array_key_exists('id', $response)) {
             throw new ShareException("Unable to share: malformated response");
         }
         
@@ -88,7 +88,7 @@ class TwitterAdapter extends AbstractOAuth1Adapter
         $sharedObject = new SharedObject();
         $sharedObject->setProvider($this->getName());
         $sharedObject->setMessage($message);
-        $sharedObject->setSocialId($jsonResponse['id']);
+        $sharedObject->setSocialId($response['id']);
         
         // Add object to parent
         $this->object->addSharedObject($sharedObject);

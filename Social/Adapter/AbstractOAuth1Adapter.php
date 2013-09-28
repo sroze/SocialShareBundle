@@ -62,24 +62,19 @@ abstract class AbstractOAuth1Adapter extends AbstractOAuthAdapter
      */
     protected function getRequestToken ($redirectUrl, array $parameters)
     {
-        $timestamp = time();
-        $oauth_parameters = array(
-            'oauth_consumer_key'     => $this->options['client_id'],
-            'oauth_timestamp'        => $timestamp,
-            'oauth_nonce'            => $this->generateNonce(),
-            'oauth_version'          => '1.0',
-            'oauth_callback'         => $redirectUrl,
-            'oauth_signature_method' => $this->options['signature_method'],
-        );
+        $oauth_parameters = $this->getOAuthParameters();
+        $oauth_parameters['oauth_callback'] = $redirectUrl;
         
         $url = $this->options['request_token_url'];
-        $response = $this->doAuthorizedPost($url, null, array(), $oauth_parameters);
-
+        $rawResponse = $this->doPost($url, null, array(
+            'Authorization' => $this->getAuthorizationHeader('POST', $url, $oauth_parameters)
+        ));
+        $response = $this->getResponseContent($rawResponse);
         if (!isset($response['oauth_token']) || !isset($response['oauth_token_secret'])) {
             throw new AuthorizationException('Not a valid request token.');
         }
         
-        $response['timestamp'] = $timestamp;
+        $response['timestamp'] = $oauth_parameters['oauth_timestamp'];
         $this->getTokenBag()->set($this, $response);
         
         return $response;
@@ -105,56 +100,56 @@ abstract class AbstractOAuth1Adapter extends AbstractOAuthAdapter
             throw new AuthorizationException('OAuth tokens don\'t match');
         }
         
-        $oauth_parameters = array(
-            'oauth_consumer_key'     => $this->options['client_id'],
-            'oauth_timestamp'        => time(),
-            'oauth_nonce'            => $this->generateNonce(),
-            'oauth_version'          => '1.0',
-            'oauth_signature_method' => $this->options['signature_method'],
-            'oauth_token'            => $request_token['oauth_token'],
-            'oauth_verifier'         => $request->get('oauth_verifier')
-        );
-        $url = $this->options['access_token_url'];
+        $oauth_parameters = $this->getOAuthParameters($token);
+        $oauth_parameters['oauth_verifier'] = $request->get('oauth_verifier');
         
-        return $this->doAuthorizedPost($url, null, array(), $oauth_parameters, $request_token['oauth_token_secret']);
+        $url = $this->options['access_token_url'];        
+        $rawResponse = $this->doPost($url, null, array(
+            'Authorization' => $this->getAuthorizationHeader('POST', $url, $oauth_parameters, array(), $request_token['oauth_token_secret'])
+        ));
+        
+        return $this->getResponseContent($rawResponse);
     }
     
     /**
-     * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::doPost()
-     */
-    protected function doPost($url, $body, $headers = array()) 
-    {
-        if (!is_array($body)) {
-            throw new \LogicException("Body must be an array to sign request with");
-        }
-        $token = $this->account->getToken();
-        $oauth_parameters = array_merge(array(
-            'oauth_consumer_key'     => $this->options['client_id'],
-            'oauth_timestamp'        => time(),
-            'oauth_nonce'            => $this->generateNonce(),
-            'oauth_version'          => '1.0',
-            'oauth_signature_method' => $this->options['signature_method'],
-            'oauth_token'            => $token->getAccessToken()
-        ), $body);
-        
-        return $this->doAuthorizedPost($url, $body, $headers, $oauth_parameters, $token->getTokenSecret());
-    }
-    
-    /**
-     * Do an authorized POST request.
+     * Get OAuth1 parameters.
      * 
-     * @param string $url
-     * @param array $oauth_parameters OAuth parameters that will be computed
-     *                                as an Authorization header.
+     * @param string $token
+     * @return array
      */
-    protected function doAuthorizedPost ($url, $body, array $headers, array $oauth_parameters, $tokenSecret = '')
+    protected function getOAuthParameters ($token = null)
+    {
+        $parameters = array(
+            'oauth_consumer_key'     => $this->options['client_id'],
+            'oauth_timestamp'        => time(),
+            'oauth_nonce'            => $this->generateNonce(),
+            'oauth_version'          => '1.0',
+            'oauth_signature_method' => $this->options['signature_method']
+        );
+        
+        if ($token != null) {
+            $parameters['oauth_token'] = $token;
+        }
+        
+        return $parameters;
+    }
+    
+    /**
+     * Compute the Authorization header.
+     * 
+     * @param string $method
+     * @param string $url
+     * @param array  $parameters
+     * @param string $tokenSecret
+     * @return string
+     */
+    protected function getAuthorizationHeader ($method, $url, array $oauth_parameters, array $extraParameters = array(), $tokenSecret = '')
     {
         // Sign the request
         $oauth_parameters['oauth_signature'] = $this->signRequest(
-            "POST",
+            $method,
             $url,
-            $oauth_parameters,
+            array_merge($oauth_parameters, $extraParameters),
             $this->options['client_secret'],
             $tokenSecret,
             $this->options['signature_method']
@@ -166,11 +161,26 @@ abstract class AbstractOAuth1Adapter extends AbstractOAuthAdapter
             $computed_oauth_parameters[$key] = $key . '="' . rawurlencode($value) . '"';
         }
         
-        $response = parent::doPost($url, $body, array_merge(array(
-            'Authorization' => 'OAuth '.implode(', ', $computed_oauth_parameters)
+        return 'OAuth '.implode(', ', $computed_oauth_parameters);
+    }
+    
+    /**
+     * Do an authorized POST request.
+     * 
+     * @param string $url
+     * @param array $oauth_parameters OAuth parameters that will be computed
+     *                                as an Authorization header.
+     */
+    protected function doAuthorizedPost ($url, array $body, array $headers = array())
+    {
+        $token = $this->account->getToken();
+        $oauth_parameters = $this->getOAuthParameters($token->getAccessToken());
+        
+        $response = $this->doPost($url, $body, array_merge(array(
+            'Authorization' => $this->getAuthorizationHeader('POST', $url, $oauth_parameters, $body, $token->getTokenSecret())
         ), $headers));
+        
         $response = $this->getResponseContent($response);
-         
         if (isset($response['oauth_problem']) || (isset($response['oauth_callback_confirmed']) && ($response['oauth_callback_confirmed'] != 'true'))) {
             throw new AuthorizationException(sprintf('OAuth error: "%s"', $response['oauth_problem']));
         }
