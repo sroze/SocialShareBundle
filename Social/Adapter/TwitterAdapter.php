@@ -71,5 +71,26 @@ class TwitterAdapter extends AbstractOAuth1Adapter
     {
         $this->resolveOptions($options);
         
+        // Tweet this message
+        $objectUrl = 'https://api.twitter.com/1.1/statuses/update.json';
+        $body = array(
+            'status' => $message
+        );
+        
+        $jsonResponse = $this->doPost($objectUrl, $body);
+        if (array_key_exists('error', $jsonResponse)) {
+            throw new ShareException($jsonResponse['error']['message'], $jsonResponse['error']['code']);
+        } else if (!array_key_exists('id', $jsonResponse)) {
+            throw new ShareException("Unable to share: malformated response");
+        }
+        
+        // Create the sharedobject
+        $sharedObject = new SharedObject();
+        $sharedObject->setProvider($this->getName());
+        $sharedObject->setMessage($message);
+        $sharedObject->setSocialId($jsonResponse['id']);
+        
+        // Add object to parent
+        $this->object->addSharedObject($sharedObject);
     }
 }
