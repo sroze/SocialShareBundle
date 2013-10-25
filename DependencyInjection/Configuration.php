@@ -1,6 +1,6 @@
 <?php
 
-namespace SRozeIO\SocialShareBundle\DependencyInjection;
+namespace SRIO\SocialShareBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('srozeio_social_share');
+        $rootNode = $treeBuilder->root('srio_social_share');
 
         $rootNode->children()
             ->arrayNode('adapters')

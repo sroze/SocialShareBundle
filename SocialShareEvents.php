@@ -1,5 +1,5 @@
 <?php
-namespace SRozeIO\SocialShareBundle;
+namespace SRIO\SocialShareBundle;
 
 class SocialShareEvents
 {
@@ -11,7 +11,7 @@ class SocialShareEvents
      * 
      * @var string
      */
-    const AUTHENTICATION_SUCCESSFUL = 'srozeio.social_share.event.authenticated.success';
+    const AUTHENTICATION_SUCCESSFUL = 'srio.social_share.event.authenticated.success';
     
     /**
      * An authentication failed.
@@ -21,5 +21,5 @@ class SocialShareEvents
      * 
      * @var string
      */
-    const AUTHENTICATION_FAILED = 'srozeio.social_share.event.authenticated.failed';
+    const AUTHENTICATION_FAILED = 'srio.social_share.event.authenticated.failed';
 }

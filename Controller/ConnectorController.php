@@ -1,18 +1,18 @@
 <?php
 
-namespace SRozeIO\SocialShareBundle\Controller;
+namespace SRIO\SocialShareBundle\Controller;
 
-use SRozeIO\SocialShareBundle\Event\AuthenticationFailedEvent;
+use SRIO\SocialShareBundle\Event\AuthenticationFailedEvent;
 
-use SRozeIO\SocialShareBundle\SocialShareEvents;
+use SRIO\SocialShareBundle\SocialShareEvents;
 
-use SRozeIO\SocialShareBundle\Event\AuthenticationSuccessfulEvent;
+use SRIO\SocialShareBundle\Event\AuthenticationSuccessfulEvent;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-use SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter;
+use SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -90,6 +90,6 @@ class ConnectorController extends Controller
      */
     protected function getAdapter ($adapterName)
     {
-        return $this->get('srozeio.social_share.adapter.'.$adapterName);
+        return $this->get('srio.social_share.adapter.'.$adapterName);
     }
 }

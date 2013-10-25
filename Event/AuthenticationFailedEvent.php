@@ -1,11 +1,11 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Event;
+namespace SRIO\SocialShareBundle\Event;
 
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 use Symfony\Component\HttpFoundation\Response;
 
-use SRozeIO\SocialShareBundle\Entity\SocialAccount;
+use SRIO\SocialShareBundle\Entity\SocialAccount;
 
 use Symfony\Component\EventDispatcher\Event;
 

@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                     http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="SRozeIO\SocialShareBundle\Entity\OAuth1Token">
+    <entity name="SRIO\SocialShareBundle\Entity\OAuth1Token">
         <field name="tokenSecret" column="tokenSecret" type="string" />
     </entity>
 </doctrine-mapping>

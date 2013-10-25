@@ -1,5 +1,5 @@
 <?php
-namespace SRozeIO\SocialShareBundle\DependencyInjection\Compiler;
+namespace SRIO\SocialShareBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -11,12 +11,12 @@ class AdapterCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('srozeio.social_share.builder')) {
+        if (!$container->hasDefinition('srio.social_share.builder')) {
             return;
         }
 
-        $definition = $container->getDefinition('srozeio.social_share.builder');
-        $taggedServices = $container->findTaggedServiceIds('srozeio.social_share.adapter');
+        $definition = $container->getDefinition('srio.social_share.builder');
+        $taggedServices = $container->findTaggedServiceIds('srio.social_share.adapter');
         
         foreach ($taggedServices as $id => $attributes) {
             $definition->addMethodCall('addAdapter', array(new Reference($id)));

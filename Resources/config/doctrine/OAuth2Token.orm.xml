@@ -4,7 +4,7 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                     http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="SRozeIO\SocialShareBundle\Entity\OAuth2Token">
+    <entity name="SRIO\SocialShareBundle\Entity\OAuth2Token">
         <field name="refreshToken" column="refreshToken" type="string" nullable="true" />
         <field name="expirationDate" column="expirationDate" type="datetime" />
     </entity>

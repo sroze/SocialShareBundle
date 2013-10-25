@@ -1,6 +1,6 @@
 <?php
 
-namespace SRozeIO\SocialShareBundle\DependencyInjection;
+namespace SRIO\SocialShareBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -44,8 +44,8 @@ class SRozeIOSocialShareExtension extends Extension
     protected function createAdapter ($container, $name, array $options)
     {
         $type = $options['type'];
-        $definition = new DefinitionDecorator('srozeio.social_share.abstract_adapter.'.$type);
-        $id = 'srozeio.social_share.adapter.'.$name;
+        $definition = new DefinitionDecorator('srio.social_share.abstract_adapter.'.$type);
+        $id = 'srio.social_share.adapter.'.$name;
         
         $container->setDefinition($id, $definition);
         $definition
@@ -54,7 +54,7 @@ class SRozeIOSocialShareExtension extends Extension
         ;
         
         // Add adapter to builder
-        $definition = $container->getDefinition('srozeio.social_share.builder');
+        $definition = $container->getDefinition('srio.social_share.builder');
         $definition->addMethodCall('addAdapter', array(new Reference($id)));
     }
 }

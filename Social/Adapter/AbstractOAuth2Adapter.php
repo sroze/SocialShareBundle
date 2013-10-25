@@ -1,26 +1,26 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Social\Adapter;
+namespace SRIO\SocialShareBundle\Social\Adapter;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use SRozeIO\SocialShareBundle\Social\Exception\TokenException;
+use SRIO\SocialShareBundle\Social\Exception\TokenException;
 
-use SRozeIO\SocialShareBundle\Entity\AuthToken;
+use SRIO\SocialShareBundle\Entity\AuthToken;
 
-use SRozeIO\SocialShareBundle\Entity\OAuth2Token;
+use SRIO\SocialShareBundle\Entity\OAuth2Token;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
-use SRozeIO\SocialShareBundle\Entity\SocialAccount;
+use SRIO\SocialShareBundle\Social\Object\SharableObjectInterface;
+use SRIO\SocialShareBundle\Entity\SocialAccount;
 
 abstract class AbstractOAuth2Adapter extends AbstractOAuthAdapter
 {
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::getAuthorizationUrl()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::getAuthorizationUrl()
      */
     public function getAuthorizationUrl ($redirectUrl, array $parameters = array())
     {
@@ -84,7 +84,7 @@ abstract class AbstractOAuth2Adapter extends AbstractOAuthAdapter
     
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::handleAuthorizationResponse()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::handleAuthorizationResponse()
      */
     public function handleAuthorizationResponse(Request $request, $redirectUrl)
     {
@@ -148,7 +148,7 @@ abstract class AbstractOAuth2Adapter extends AbstractOAuthAdapter
     
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::refreshToken()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::refreshToken()
      */
     public function refreshToken (AuthToken $token)
     {
@@ -175,7 +175,7 @@ abstract class AbstractOAuth2Adapter extends AbstractOAuthAdapter
 
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::setDefaultOptions()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::setDefaultOptions()
      */
     protected function setDefaultOptions(OptionsResolverInterface $resolver)
     {

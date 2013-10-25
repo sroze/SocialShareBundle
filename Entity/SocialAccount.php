@@ -1,5 +1,5 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Entity;
+namespace SRIO\SocialShareBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -116,7 +116,7 @@ class SocialAccount
     /**
      * Set token
      *
-     * @param \SRozeIO\SocialShareBundle\Entity\AuthToken $token
+     * @param \SRIO\SocialShareBundle\Entity\AuthToken $token
      * @return SocialAccount
      */
     public function setToken(AuthToken $token = null)
@@ -129,7 +129,7 @@ class SocialAccount
     /**
      * Get token
      *
-     * @return \SRozeIO\SocialShareBundle\Entity\AuthToken 
+     * @return \SRIO\SocialShareBundle\Entity\AuthToken
      */
     public function getToken()
     {

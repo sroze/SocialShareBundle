@@ -1,11 +1,11 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Social\Adapter;
+namespace SRIO\SocialShareBundle\Social\Adapter;
 
-use SRozeIO\SocialShareBundle\Social\Exception\SocialException;
+use SRIO\SocialShareBundle\Social\Exception\SocialException;
 
-use SRozeIO\SocialShareBundle\Social\Exception\AuthorizationException;
+use SRIO\SocialShareBundle\Social\Exception\AuthorizationException;
 
-use SRozeIO\SocialShareBundle\Entity\AuthToken;
+use SRIO\SocialShareBundle\Entity\AuthToken;
 
 use Symfony\Component\Serializer\Serializer;
 
@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Encoder\XmlEncoder;
 
 use Symfony\Component\Config\Util\XmlUtils;
 
-use SRozeIO\SocialShareBundle\Social\Session\TokenBag;
+use SRIO\SocialShareBundle\Social\Session\TokenBag;
 
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -27,8 +27,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
-use SRozeIO\SocialShareBundle\Entity\SocialAccount;
+use SRIO\SocialShareBundle\Social\Object\SharableObjectInterface;
+use SRIO\SocialShareBundle\Entity\SocialAccount;
 
 /**
  * The abstract adapter.

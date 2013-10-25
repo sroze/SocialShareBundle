@@ -1,5 +1,5 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Entity;
+namespace SRIO\SocialShareBundle\Entity;
 
 class AuthToken
 {

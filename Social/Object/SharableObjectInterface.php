@@ -1,7 +1,7 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Social\Object;
+namespace SRIO\SocialShareBundle\Social\Object;
 
-use SRozeIO\SocialShareBundle\Entity\SharedObject;
+use SRIO\SocialShareBundle\Entity\SharedObject;
 
 interface SharableObjectInterface
 {

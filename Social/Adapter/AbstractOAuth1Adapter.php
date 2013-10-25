@@ -1,13 +1,13 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Social\Adapter;
+namespace SRIO\SocialShareBundle\Social\Adapter;
 
-use SRozeIO\SocialShareBundle\Entity\AuthToken;
+use SRIO\SocialShareBundle\Entity\AuthToken;
 
-use SRozeIO\SocialShareBundle\Social\Exception\ShareException;
+use SRIO\SocialShareBundle\Social\Exception\ShareException;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use SRozeIO\SocialShareBundle\Social\Exception\AuthorizationException;
+use SRIO\SocialShareBundle\Social\Exception\AuthorizationException;
 
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
@@ -15,14 +15,14 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
-use SRozeIO\SocialShareBundle\Entity\SocialAccount;
+use SRIO\SocialShareBundle\Social\Object\SharableObjectInterface;
+use SRIO\SocialShareBundle\Entity\SocialAccount;
 
 abstract class AbstractOAuth1Adapter extends AbstractOAuthAdapter
 {
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::getAuthorizationUrl()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::getAuthorizationUrl()
      */
     public function getAuthorizationUrl ($redirectUrl, array $parameters = array())
     {
@@ -35,7 +35,7 @@ abstract class AbstractOAuth1Adapter extends AbstractOAuthAdapter
 
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::setDefaultOptions()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::setDefaultOptions()
      */
     protected function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -195,7 +195,7 @@ abstract class AbstractOAuth1Adapter extends AbstractOAuthAdapter
      * 
      * Because OAuth1 tokens don't expires, always return true.
      * 
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::refreshToken()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::refreshToken()
      */
     public function refreshToken (AuthToken $token)
     {

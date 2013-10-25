@@ -1,14 +1,14 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Social\Adapter;
+namespace SRIO\SocialShareBundle\Social\Adapter;
 
-use SRozeIO\SocialShareBundle\Social\Exception\AuthorizationException;
+use SRIO\SocialShareBundle\Social\Exception\AuthorizationException;
 
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
-use SRozeIO\SocialShareBundle\Entity\SocialAccount;
+use SRIO\SocialShareBundle\Social\Object\SharableObjectInterface;
+use SRIO\SocialShareBundle\Entity\SocialAccount;
 
 abstract class AbstractOAuthAdapter extends AbstractAdapter
 {
@@ -23,7 +23,7 @@ abstract class AbstractOAuthAdapter extends AbstractAdapter
     
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::setDefaultOptions()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::setDefaultOptions()
      */
     protected function setDefaultOptions(OptionsResolverInterface $resolver)
     {

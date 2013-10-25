@@ -1,8 +1,8 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Social\Session;
+namespace SRIO\SocialShareBundle\Social\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-use SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter;
+use SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter;
 
 use Symfony\Component\HttpFoundation\Session\SessionBagInterface;
 

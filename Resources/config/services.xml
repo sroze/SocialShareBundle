@@ -5,19 +5,19 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="srozeio.social_share.builder.class">SRozeIO\SocialShareBundle\Social\ShareBuilder</parameter>
-        <parameter key="srozeio.social_share.abstract_adapter.class">SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter</parameter>
-        <parameter key="srozeio.social_share.adapter.facebook.class">SRozeIO\SocialShareBundle\Social\Adapter\FacebookAdapter</parameter>
-        <parameter key="srozeio.social_share.adapter.google.class">SRozeIO\SocialShareBundle\Social\Adapter\GooglePlusAdapter</parameter>
-        <parameter key="srozeio.social_share.adapter.twitter.class">SRozeIO\SocialShareBundle\Social\Adapter\TwitterAdapter</parameter>
-        <parameter key="srozeio.social_share.adapter.linkedin.class">SRozeIO\SocialShareBundle\Social\Adapter\LinkedInAdapter</parameter>
+        <parameter key="srio.social_share.builder.class">SRIO\SocialShareBundle\Social\ShareBuilder</parameter>
+        <parameter key="srio.social_share.abstract_adapter.class">SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter</parameter>
+        <parameter key="srio.social_share.adapter.facebook.class">SRIO\SocialShareBundle\Social\Adapter\FacebookAdapter</parameter>
+        <parameter key="srio.social_share.adapter.google.class">SRIO\SocialShareBundle\Social\Adapter\GooglePlusAdapter</parameter>
+        <parameter key="srio.social_share.adapter.twitter.class">SRIO\SocialShareBundle\Social\Adapter\TwitterAdapter</parameter>
+        <parameter key="srio.social_share.adapter.linkedin.class">SRIO\SocialShareBundle\Social\Adapter\LinkedInAdapter</parameter>
     </parameters>
 
     <services>
-        <service id="srozeio.social_share.builder" class="%srozeio.social_share.builder.class%"></service>
+        <service id="srio.social_share.builder" class="%srio.social_share.builder.class%"></service>
         
         <!-- Abstract adapter -->
-        <service id="srozeio.social_share.abstract_adapter" class="%srozeio.social_share.abstract_adapter.class%" abstract="true">
+        <service id="srio.social_share.abstract_adapter" class="%srio.social_share.abstract_adapter.class%" abstract="true">
             <argument /> <!-- Name -->
             <argument /> <!-- Parameters -->
             <argument type="service" id="buzz" />
@@ -26,33 +26,33 @@
         
         <!-- Abstract social adapters -->
         <service 
-            id="srozeio.social_share.abstract_adapter.facebook" 
-            class="%srozeio.social_share.adapter.facebook.class%"
-            parent="srozeio.social_share.abstract_adapter"
+            id="srio.social_share.abstract_adapter.facebook"
+            class="%srio.social_share.adapter.facebook.class%"
+            parent="srio.social_share.abstract_adapter"
             abstract="true" />
         
         <service 
-            id="srozeio.social_share.abstract_adapter.google" 
-            class="%srozeio.social_share.adapter.google.class%"
-            parent="srozeio.social_share.abstract_adapter"
+            id="srio.social_share.abstract_adapter.google"
+            class="%srio.social_share.adapter.google.class%"
+            parent="srio.social_share.abstract_adapter"
             abstract="true" />
         
         <service 
-            id="srozeio.social_share.abstract_adapter.twitter" 
-            class="%srozeio.social_share.adapter.twitter.class%"
-            parent="srozeio.social_share.abstract_adapter"
+            id="srio.social_share.abstract_adapter.twitter"
+            class="%srio.social_share.adapter.twitter.class%"
+            parent="srio.social_share.abstract_adapter"
             abstract="true" />
         
         <service 
-            id="srozeio.social_share.abstract_adapter.linkedin" 
-            class="%srozeio.social_share.adapter.linkedin.class%"
-            parent="srozeio.social_share.abstract_adapter"
+            id="srio.social_share.abstract_adapter.linkedin"
+            class="%srio.social_share.adapter.linkedin.class%"
+            parent="srio.social_share.abstract_adapter"
             abstract="true" />
         
         <!-- You can add you custom adapters like that -->
-        <!-- <service id="srozeio.social_share.adapter.facebook" class="%srozeio.social_share.adapter.facebook.class%">
+        <!-- <service id="srio.social_share.adapter.facebook" class="%srio.social_share.adapter.facebook.class%">
             <argument type="service" id="buzz" />
-            <tag name="srozeio.social_share.adapter" />
+            <tag name="srio.social_share.adapter" />
         </service> -->
     </services>
 </container>

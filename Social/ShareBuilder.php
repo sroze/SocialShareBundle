@@ -1,13 +1,13 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Social;
+namespace SRIO\SocialShareBundle\Social;
 
-use SRozeIO\SocialShareBundle\Social\Exception\SocialException;
+use SRIO\SocialShareBundle\Social\Exception\SocialException;
 
-use SRozeIO\SocialShareBundle\Social\Exception\ShareException;
+use SRIO\SocialShareBundle\Social\Exception\ShareException;
 
-use SRozeIO\SocialShareBundle\Entity\SocialAccount;
-use SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter;
-use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
+use SRIO\SocialShareBundle\Entity\SocialAccount;
+use SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter;
+use SRIO\SocialShareBundle\Social\Object\SharableObjectInterface;
 
 /**
  * This class is the main entry point of the sharing process.

@@ -1,6 +1,6 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Entity;
-use SRozeIO\SocialShareBundle\Social\Object\AbstractSharedObject;
+namespace SRIO\SocialShareBundle\Entity;
+use SRIO\SocialShareBundle\Social\Object\AbstractSharedObject;
 
 class SharedObject extends AbstractSharedObject
 {
@@ -115,7 +115,7 @@ class SharedObject extends AbstractSharedObject
     /**
      * Get social account used to share object.
      * 
-     * @return \SRozeIO\SocialShareBundle\Entity\SocialAccount
+     * @return \SRIO\SocialShareBundle\Entity\SocialAccount
      */
     public function getSocialAccount()
     {

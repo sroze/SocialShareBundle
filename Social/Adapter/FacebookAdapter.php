@@ -1,17 +1,17 @@
 <?php
-namespace SRozeIO\SocialShareBundle\Social\Adapter;
+namespace SRIO\SocialShareBundle\Social\Adapter;
 
-use SRozeIO\SocialShareBundle\Entity\OAuth2Token;
+use SRIO\SocialShareBundle\Entity\OAuth2Token;
 
-use SRozeIO\SocialShareBundle\Entity\SharedObject;
+use SRIO\SocialShareBundle\Entity\SharedObject;
 
-use SRozeIO\SocialShareBundle\Social\Exception\ShareException;
+use SRIO\SocialShareBundle\Social\Exception\ShareException;
 
 use Buzz\Message\Response;
 
-use SRozeIO\SocialShareBundle\Entity\AuthToken;
+use SRIO\SocialShareBundle\Entity\AuthToken;
 
-use SRozeIO\SocialShareBundle\Social\Exception\AuthorizationException;
+use SRIO\SocialShareBundle\Social\Exception\AuthorizationException;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -19,14 +19,14 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use SRozeIO\SocialShareBundle\Social\Object\SharableObjectInterface;
-use SRozeIO\SocialShareBundle\Entity\SocialAccount;
+use SRIO\SocialShareBundle\Social\Object\SharableObjectInterface;
+use SRIO\SocialShareBundle\Entity\SocialAccount;
 
 class FacebookAdapter extends AbstractOAuth2Adapter
 {
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::handleAuthorizationResponse()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::handleAuthorizationResponse()
      */
     public function handleAuthorizationResponse(Request $request, $redirectUrl) 
     {
@@ -117,7 +117,7 @@ class FacebookAdapter extends AbstractOAuth2Adapter
 
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::setDefaultOptions()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::setDefaultOptions()
      */
     protected function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -132,7 +132,7 @@ class FacebookAdapter extends AbstractOAuth2Adapter
 
     /**
      * (non-PHPdoc)
-     * @see \SRozeIO\SocialShareBundle\Social\Adapter\AbstractAdapter::share()
+     * @see \SRIO\SocialShareBundle\Social\Adapter\AbstractAdapter::share()
      */
     public function share ($message, array $options = array())
     {

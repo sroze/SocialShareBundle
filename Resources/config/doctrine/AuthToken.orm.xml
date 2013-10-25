@@ -4,14 +4,14 @@
     xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                     http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="SRozeIO\SocialShareBundle\Entity\AuthToken" table="social_authtoken"
+    <entity name="SRIO\SocialShareBundle\Entity\AuthToken" table="social_authtoken"
             inheritance-type="SINGLE_TABLE">
         <discriminator-column name="tokenType" type="string" />
         
 	    <discriminator-map>
-	        <discriminator-mapping value="auth" class="SRozeIO\SocialShareBundle\Entity\AuthToken" />
-	        <discriminator-mapping value="oauth1" class="SRozeIO\SocialShareBundle\Entity\OAuth1Token" />
-	        <discriminator-mapping value="oauth2" class="SRozeIO\SocialShareBundle\Entity\OAuth2Token" />
+	        <discriminator-mapping value="auth" class="SRIO\SocialShareBundle\Entity\AuthToken" />
+	        <discriminator-mapping value="oauth1" class="SRIO\SocialShareBundle\Entity\OAuth1Token" />
+	        <discriminator-mapping value="oauth2" class="SRIO\SocialShareBundle\Entity\OAuth2Token" />
 	    </discriminator-map>
 	    
         <id name="id" type="integer" column="id">

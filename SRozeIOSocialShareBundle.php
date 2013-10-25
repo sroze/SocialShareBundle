@@ -1,8 +1,8 @@
 <?php
 
-namespace SRozeIO\SocialShareBundle;
+namespace SRIO\SocialShareBundle;
 
-use SRozeIO\SocialShareBundle\DependencyInjection\Compiler\AdapterCompilerPass;
+use SRIO\SocialShareBundle\DependencyInjection\Compiler\AdapterCompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
