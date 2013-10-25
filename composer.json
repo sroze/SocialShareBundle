@@ -1,0 +1,23 @@
+{
+    "name": "srio/social-share-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony Social Share Bundle",
+    "keywords": ["symfony", "social", "share", "facebook", "twitter", "linked", "google"],
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Samuel ROZE",
+            "email": "samuel@sroze.io",
+            "homepage": "http://www.sroze.io"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/framework-bundle":         ">=2.1"
+    },
+    "autoload": {
+        "psr-0": { "SRIO\\SocialShareBundle": "" }
+    },
+    "target-dir": "SRIO/SocialShareBundle",
+    "minimum-stability": "dev"
+}
